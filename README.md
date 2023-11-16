@@ -2,9 +2,11 @@
 通过在h5上模拟点击，调用结束课程请求等方法实现自动化刷课，具有一定隐蔽性，不会被发现
 
 # 本脚本是 九尾妖渚 大佬脚本的二改，主要适配了2023年安全微伴新界面。
-（本人今年大三，所以本脚本大概会再维护两年[doge]，每年东北大学开始微伴的时候我会对此脚本进行更新，基本可以称得上是随缘更新了，）
+（本人今年大三，所以本脚本大概会再维护两年[doge]，每年东北大学开始微伴的时候我会对此脚本进行更新，基本可以称得上是随缘更新了，如果在我没有weiba的时候发现了问题的话，欢迎在 [https://github.com/fangkehou-team/weiban-tool](https://github.com/fangkehou-team/weiban-tool) 给我发 issue 和 pr，我看到的话会更新）
 
 # 适用于安全微伴平台
+
+# 安装地址：[https://greasyfork.org/zh-CN/scripts/469807-%E5%AE%89%E5%85%A8%E5%BE%AE%E4%BC%B4%E5%88%B7%E8%AF%BE%E5%8A%A9%E6%89%8B-2023%E5%B9%B4%E6%96%B0%E7%95%8C%E9%9D%A2](https://greasyfork.org/zh-CN/scripts/469807-%E5%AE%89%E5%85%A8%E5%BE%AE%E4%BC%B4%E5%88%B7%E8%AF%BE%E5%8A%A9%E6%89%8B-2023%E5%B9%B4%E6%96%B0%E7%95%8C%E9%9D%A2)
 
 # 打开 [https://weiban.mycourse.cn/](https://weiban.mycourse.cn/) 账号密码登录即可
 
