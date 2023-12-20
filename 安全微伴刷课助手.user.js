@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         安全微伴刷课助手（2023年新界面）
-// @version      0.8
+// @version      0.8.1
 // @description  通过在h5上模拟点击，调用结束课程请求等方法实现自动化刷课，具有一定隐蔽性，不会被发现
 // @author       九尾妖渚 Modifyed By lony2003
 // @match      *://weiban.mycourse.cn/*
@@ -87,7 +87,7 @@
                             })
                             //console.log(res);
                             getVal(()=>{return res.find('.title')}, (res2)=>{
-                                if(res2.length / 2 != taskNumber){
+                                if(res2.length / 2 == 0){
 
                                     console.log("reloading");
 
