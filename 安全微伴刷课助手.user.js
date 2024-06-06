@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         安全微伴刷课助手（2023年新界面）
-// @version      0.8.2
+// @version      0.8.3
 // @description  通过在h5上模拟点击，调用结束课程请求等方法实现自动化刷课，具有一定隐蔽性，不会被发现
 // @author       九尾妖渚 Modifyed By lony2003
 // @match      *://weiban.mycourse.cn/*
@@ -10,6 +10,8 @@
 // @run-at       document-end
 // @namespace https://greasyfork.org/users/822791
 // @license GPL-v3
+// @downloadURL https://update.greasyfork.org/scripts/469807/%E5%AE%89%E5%85%A8%E5%BE%AE%E4%BC%B4%E5%88%B7%E8%AF%BE%E5%8A%A9%E6%89%8B%EF%BC%882023%E5%B9%B4%E6%96%B0%E7%95%8C%E9%9D%A2%EF%BC%89.user.js
+// @updateURL https://update.greasyfork.org/scripts/469807/%E5%AE%89%E5%85%A8%E5%BE%AE%E4%BC%B4%E5%88%B7%E8%AF%BE%E5%8A%A9%E6%89%8B%EF%BC%882023%E5%B9%B4%E6%96%B0%E7%95%8C%E9%9D%A2%EF%BC%89.meta.js
 // ==/UserScript==
 
 (function() {
@@ -114,13 +116,17 @@
                 try{console.log(exportRoot.currentFrame)}catch(e){}
                 try {
                     function getQueryString(query) {	
-	                    var reg = new RegExp("(^|&)" + query + "=([^&]*)(&|$)");
+                        var reg = new RegExp("(^|&)" + query + "=([^&]*)(&|$)");
                         var r = decodeURI(window.location.search.substr(1)).match(reg);
                         if (r != null)return unescape(r[2]);
-		                return null;
+                        return null;
                     }
                     var userid = getQueryString("userCourseId");
                     var jiaoxuejihuaid = getQueryString("tenantCode");
+                    var userCourseId = getQueryString("userCourseId");
+                    var tenantCode = getQueryString('tenantCode');
+                    var WEIBAN = "weiban";
+                    var weiban = getQueryString(WEIBAN);
                     var finishWxHost = document.referrer.replace("http://","").replace("https://","").split("/")[0];
                     if(document.referrer=="" || document.referrer==null || document.referrer==undefined){
                         finishWxHost = "weiban.mycourse.cn"
@@ -131,7 +137,7 @@
                         if(url.indexOf('open.mycourse.cn') > 0) {
                             return `https://open.mycourse.cn/proteus/usercourse/finish.do`;
                         } else {
-                            return `https://weiban.mycourse.cn/pharos/usercourse/v1/${methodToken}.do`;
+                            return `https://weiban.mycourse.cn/pharos/usercourse/v2/${userCourseId}.do`;
                         }
                     }
                     var finishWxUrl=getRecordUrl(webUrl);
@@ -142,22 +148,60 @@
 
                     var finishData = {"userCourseId": userid, "tenantCode": jiaoxuejihuaid};
 
-                    $.ajax({
-                        async: false,
-                        url: finishWxUrl,
-                        type: "GET",
-                        dataType: "jsonp",
-                        data: finishData,
-                        timeout: 5000,
+                    if (weiban == WEIBAN) {
+                        function invokeCaptcha(callback) {
+                            $('<div id="captcha-container"></div>').appendTo('body');
 
-                        success : function (data) {
-                            backToList();
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            new TAC({
+                                requestCaptchaDataUrl: 'https://weiban.mycourse.cn/pharos/usercourse/getCaptcha.do?userCourseId=' + userCourseId,
+                                validCaptchaUrl: 'https://weiban.mycourse.cn/pharos/usercourse/checkCaptcha.do?userCourseId=' + userCourseId,
+                                bindEl: '#captcha-container',
+                                validSuccess: (res, c, tac) => {
+                                    callback(res.data);
+                                    tac.destroyWindow();
+                                    $('#captcha-container').remove();
+                                }
+                            }).init();
+
+                            $('#tianai-captcha-slider-close-btn').one('click', function () {
+                                $('#captcha-container').remove();
+                            });
                         }
-                    });
+                        invokeCaptcha((token) => {
+                            $.ajax({
+                                async: false,
+                                url: `https://weiban.mycourse.cn/pharos/usercourse/v2/${token}.do`,
+                                type: "GET",
+                                dataType: "jsonp",
+                                data: { userCourseId, tenantCode },
+                                timeout: 5000,
+
+                                success : function (data) {
+                                    backToList();
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                }
+                            });
+                        });
+                    } else {
+                        $.ajax({
+                            async: false,
+                            url: finishWxUrl,
+                            type: "GET",
+                            dataType: "jsonp",
+                            data: finishData,
+                            timeout: 5000,
+
+                            success : function (data) {
+                                backToList();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            }
+                        });
+                    }
                 } catch (e) {
                     alert("报了啥错误" + e)
+                    console.log(e)
                 }
 
             }, 10000)
